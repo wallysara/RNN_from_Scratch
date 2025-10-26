@@ -1,40 +1,61 @@
+# Recurrent Neural Network (RNN) from Scratch
 
-This project implements a **Recurrent Neural Network (RNN)** from scratch using only PyTorch linear layers and tensor operations — without relying on high-level modules like `nn.RNN`. The model classifies names by language (e.g., English, French, Italian) using the **Names dataset** from the official PyTorch tutorial.
-
----
-
-## Overview
-- Manual **RNN cell** with hidden state propagation and **BPTT**
-- **Gradient clipping** for stability
-- Character-level inputs and **NLLLoss** objective
-- Training loss tracking and **interactive prediction** mode
+This project implements a **Recurrent Neural Network (RNN)** from scratch using PyTorch — without relying on `nn.RNN`.  
+It demonstrates how recurrent architectures process sequential data step by step, forming the conceptual foundation for modern architectures like **Transformers**, which replace recurrence with **self-attention** for parallel sequence modeling.
 
 ---
 
-## Project Structure
+## 🧠 Overview
+
+- Built a **character-level RNN** for name language classification.  
+- Implemented **manual forward propagation** and **Backpropagation Through Time (BPTT)**.  
+- Applied **gradient clipping** for stable training.  
+- Evaluated performance using **NLLLoss** and visualized training loss.  
+- Compared baseline RNN behavior with modern recurrent variants like **GRU** and **LSTM** — precursors to the **Transformer** model.
+
+
+## 🧩 Model Architecture
+
+### Simple RNN Cell
+```h_t = tanh(W_hh * h_{t-1} + W_xh * x_t)
+y_t = log_softmax(W_hy * [x_t, h_t])
+``` 
+### Components
+- **Input:** One-hot encoded characters  
+- **Hidden layer:** `nn.Linear(input_size + hidden_size, hidden_size)`  
+- **Output layer:** `nn.Linear(input_size + hidden_size, output_size)`  
+- **Activation:** `tanh`  
+- **Loss:** `NLLLoss`
 
 ---
 
-## Model
-- Input: one-hot vectors over allowed characters
-- Hidden: `nn.Linear(input_size + hidden_size, hidden_size)` with `tanh`
-- Output: `nn.Linear(input_size + hidden_size, n_categories)` + `LogSoftmax`
-- Loss: `NLLLoss`
+## 🚀 Training
 
----
+### Steps
+1. Load and preprocess the dataset (`unicode → ASCII`, category parsing).  
+2. Convert each name into one-hot vectors.  
+3. Train using **SGD + momentum**, with **gradient clipping** to avoid exploding gradients.  
+4. Log and plot the average loss.
 
-## Training
-1) Load and preprocess data (Unicode → ASCII, category parsing)  
-2) Convert names to tensors (`[seq_len x 1 x n_letters]`)  
-3) Train with SGD + momentum and **clip_grad_norm_**  
-4) Track loss every 1k steps, print status every 5k
-
-Example:
+### Example
 ```python
 for i in range(n_iters):
     category, line, cat_tensor, line_tensor = random_training_example(category_lines, all_categories)
     output, loss = train(line_tensor, cat_tensor)
-Inference
+```
+📊 Results
+
+The RNN learns to classify names by language based on letter sequences.
+
+Example outputs:
+```
+Input: "Albert"   →  French ✅  
+Input: "Gonzalez" →  Spanish ✅
+```
+🧩 Interactive Prediction
+
+After training, run:
+```
 python predict.py
 
 ```
@@ -43,15 +64,26 @@ Example:
 Input: Marco
 Output: Italian
 ```
-Requirements:
+🧪 Concepts Demonstrated
+
+Recurrent computation over sequences
+
+Backpropagation Through Time (BPTT)
+
+Gradient clipping
+
+Character-level modeling
+
+Comparison between RNN, GRU, LSTM, and the conceptual shift toward Transformers
+
+🧰 Requirements
 ```
 pip install torch matplotlib
 ```
-References:
-PyTorch Char-RNN Tutorial
-Understanding LSTMs (colah blog)
+📚 References
 
-Resume Snippet:
-RNN from Scratch (Character-Level Classification) — Personal Project (2025)
-• Implemented a pure-PyTorch RNN cell with BPTT and gradient clipping.
-• Trained on character sequences for language classification of names; tracked loss and enabled interactive predictions.
+PyTorch RNN Classification Tutorial
+
+Understanding LSTM and RNNs
+
+Attention Is All You Need (Vaswani et al., 2017)
